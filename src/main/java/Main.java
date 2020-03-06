@@ -1,6 +1,6 @@
 import homeworks_java_modul.task1.Task1;
 import homeworks_java_modul.task2.KeyValueMatchException;
-import homeworks_java_modul.task2.PropertyReader;
+import homeworks_java_modul.task2.Task2;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class Main {
   }
 
   public static void secondTask() throws IOException {
-    PropertyReader propertyReader = new PropertyReader();
+    Task2 propertyReader = new Task2();
     Map<String, Integer> swapped = new HashMap<>();
 
     try {
