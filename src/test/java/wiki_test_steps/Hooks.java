@@ -13,10 +13,6 @@ public class Hooks {
     return driver;
   }
 
-  public static void closeDriver() {
-    driver.quit();
-  }
-
   @Before
   public void before() {
     driver = WebDrivers.getChromeDriver();
@@ -24,6 +20,6 @@ public class Hooks {
 
   @After(order = 1)
   public void tearDown() {
-    driver.quit();
+    WebDrivers.exitDriver();
   }
 }
