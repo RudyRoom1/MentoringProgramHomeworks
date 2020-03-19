@@ -77,10 +77,12 @@ public class WikiTestSteps {
 
     logger.info("get text from all tags");
     if (date.equals("TodayDate")) {
-      todayDateGeoTags = eventPage.getAllGeoTags(eventPage.getListOfTags()).stream().filter(geoPoints::contains)
+      todayDateGeoTags = eventPage.getAllGeoTags(eventPage.getListOfTags()).stream()
+          .filter(geoPoints::contains)
           .collect(Collectors.toList());
     } else if (date.equals("Tomorrow")) {
-      tomorrowDateGeoTags = eventPage.getAllGeoTags(eventPage.getListOfTags()).stream().filter(geoPoints::contains)
+      tomorrowDateGeoTags = eventPage.getAllGeoTags(eventPage.getListOfTags()).stream()
+          .filter(geoPoints::contains)
           .collect(Collectors.toList());
     }
 

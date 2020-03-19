@@ -15,7 +15,7 @@ public class Hooks {
 
   @Before
   public void before() {
-    driver = WebDrivers.getChromeDriver();
+    driver = WebDrivers.createWebDriver();
   }
 
   @After(order = 1)
