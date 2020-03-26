@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.assertj.core.api.SoftAssertions;
-import org.openqa.selenium.By;
 import org.openqa.selenium.support.PageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,45 +22,17 @@ public class WikiTestSteps {
   WikiEventPage eventPage = new WikiEventPage();
   List<String> todayDateGeoTags = new ArrayList<>();
   List<String> tomorrowDateGeoTags = new ArrayList<>();
-  List<String> geoPoints = Arrays.asList("China", "Canada", "New York", "Philippines");
-  LocalDate fullTodayDate = LocalDate.now();
-
-  @Given("User opens Wikipedia page and search all today's")
-  public void userOpensWikipediaPageAndSearchAllTodaySEvents() {
-
-    String todayData = (
-        Arrays.asList(
-            fullTodayDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
-                .split(",")).get(0));
-
-    logger.info("user is opening main page");
-    Hooks.getDriver().get("https://en.wikipedia.org/");
-
-    logger.info("user typing a search query");
-
-    Hooks
-        .getDriver()
-        .findElement(By.id("searchInput"))
-        .sendKeys(todayData);
-
-    logger.info("user clicks search button");
-
-    Hooks
-        .getDriver()
-        .findElement(By.id("searchButton"))
-        .click();
-  }
+  List<String> geoPoints = Arrays
+      .asList("China", "Canada", "New York", "Philippines", "Rome", "Paris", "Azerbaijani");
+  LocalDate fullTodayDate = LocalDate.now().plusDays(5);
+  LocalDate fullTomorrowDate = fullTodayDate.plusDays(1);
 
   @Given("User opens Wikipedia page and search all today's events")
   public void userOpensWikipediaPageAndSearchAllTodaySEventsa() {
 
     PageFactory.initElements(Hooks.getDriver(), eventPage);
 
-    String todayData = (
-        Arrays.asList(
-            LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
-                .split(",")).get(0));
-
+    String todayData = getShortDate(fullTodayDate);
     logger.info("user is opening main page");
 
     logger.info("user typing a search query");
@@ -90,7 +61,12 @@ public class WikiTestSteps {
 
   @And("Forward next day on calender bar")
   public void forwardNextDayOnCalenderBar() {
-    eventPage.getNextDay();
+    if (fullTodayDate.getMonth() != fullTodayDate.plusDays(1).getMonth()) {
+      eventPage.getNextMonth(fullTodayDate);
+      eventPage.getNextDay(getShortDate(fullTomorrowDate));
+    } else {
+      eventPage.getNextDay(getShortDate(fullTomorrowDate));
+    }
   }
 
   @Then("Compare calculated data")
@@ -102,5 +78,15 @@ public class WikiTestSteps {
             todayDateGeoTags.size(), fullTodayDate.plusDays(1),
             tomorrowDateGeoTags.size()))
         .isEqualTo(tomorrowDateGeoTags.size());
+    logger.info("{} geoTags \nCount for {}: {} \nCount for {}: {}\n", String.join(",", geoPoints),
+        fullTodayDate, todayDateGeoTags.size(), fullTodayDate.plusDays(1),
+        tomorrowDateGeoTags.size());
+    softly.assertAll();
+  }
+
+  public String getShortDate(LocalDate date) {
+    return Arrays.asList(
+        date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+            .split(",")).get(1).trim();
   }
 }

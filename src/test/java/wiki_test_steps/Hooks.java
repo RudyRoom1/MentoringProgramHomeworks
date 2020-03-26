@@ -2,6 +2,7 @@ package wiki_test_steps;
 
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import lombok.SneakyThrows;
 import org.openqa.selenium.WebDriver;
 import webdriver.WebDrivers;
 
@@ -13,6 +14,7 @@ public class Hooks {
     return driver;
   }
 
+  @SneakyThrows
   @Before
   public void before() {
     driver = WebDrivers.createWebDriver();

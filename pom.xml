@@ -94,4 +94,15 @@
     </dependency>
     <!-- logger -->
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>spring-repo</id>
+      <url>https://repo.spring.io/plugins-release</url>
+    </repository>
+    <repository>
+      <id>rp</id>
+      <url>https://dl.bintray.com/epam/reportportal/</url>
+    </repository>
+  </repositories>
 </project>

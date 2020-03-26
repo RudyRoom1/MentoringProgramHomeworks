@@ -1,8 +1,10 @@
 package pages;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -11,7 +13,13 @@ import wiki_test_steps.Hooks;
 @Data
 public class WikiEventPage {
 
-  @FindBy(xpath = "//*[@id=\"mw-content-text\"]/div/ul[1]//a")
+  final String NEXT_MONTH_XPATH_PATTERN = "//table[@class='toccolours floatright']//a[@title='%s']";
+  final String NEXT_DAY_PATTERN = "//td/a[@title ='%s']";
+  WebElement nextMonthButton;
+  WebElement nextDayButton;
+
+  @FindBy(xpath = "//span[@id='Events']/../following-sibling::ul[1]//a")
+  //TODO ASK HOW TO CHANGE TO CREATE WITHOUT [1]
   private List<WebElement> listOfTags;
 
   @FindBy(id = "searchInput")
@@ -19,9 +27,6 @@ public class WikiEventPage {
 
   @FindBy(id = "searchButton")
   private WebElement searchButton;
-
-  @FindBy(xpath = "//*[@id=\"mw-content-text\"]//*[@class=\"mw-selflink selflink\"]/ancestor::td/following-sibling::td[position()='1']")
-  private WebElement nextDayInCalendar;
 
   public WikiEventPage() {
     Hooks.getDriver().get("https://en.wikipedia.org/");
@@ -33,7 +38,29 @@ public class WikiEventPage {
         .collect(Collectors.toList());
   }
 
-  public void getNextDay() {
-    nextDayInCalendar.click();
+  public void getNextMonth(LocalDate date) {
+    String nextMonth = date.plusMonths(1).getMonth().toString().toLowerCase();
+    String nextMonthTitle = firstLetterToUpperCase(nextMonth);
+    String nextMonthLocator = String
+        .format(NEXT_MONTH_XPATH_PATTERN,
+            nextMonthTitle);
+    nextMonthButton = Hooks.getDriver().findElement(By.xpath(nextMonthLocator));
+    nextMonthButton.click();
   }
+
+  public void getNextDay(String day) {
+    String nextDayLocator = String
+        .format(NEXT_DAY_PATTERN,
+            day);
+    nextDayButton = Hooks.getDriver().findElement(By.xpath(nextDayLocator));
+    nextDayButton.click();
+  }
+
+  public String firstLetterToUpperCase(String word) {
+    if (word == null || word.isEmpty()) {
+      return "";
+    }
+    return word.substring(0, 1).toUpperCase() + word.substring(1);
+  }
+
 }
