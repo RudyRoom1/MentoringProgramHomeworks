@@ -9,6 +9,7 @@ import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.support.PageFactory;
@@ -24,7 +25,8 @@ public class WikiTestSteps {
   List<String> tomorrowDateGeoTags = new ArrayList<>();
   List<String> geoPoints = Arrays
       .asList("China", "Canada", "New York", "Philippines", "Rome", "Paris", "Azerbaijani");
-  LocalDate fullTodayDate = LocalDate.now().plusDays(5);
+  DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MMMM d", new Locale("en"));
+  LocalDate fullTodayDate =  LocalDate.now().plusDays(4);
   LocalDate fullTomorrowDate = fullTodayDate.plusDays(1);
 
   @Given("User opens Wikipedia page and search all today's events")
@@ -86,7 +88,7 @@ public class WikiTestSteps {
 
   public String getShortDate(LocalDate date) {
     return Arrays.asList(
-        date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
-            .split(",")).get(1).trim();
+        date.format(dateTimeFormatter)
+            .split("-")).get(1).trim();
   }
 }
