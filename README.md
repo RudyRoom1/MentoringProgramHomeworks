@@ -9,5 +9,6 @@ mvn test -Dbrowser=firefox
 Edge run:
 mvn test -Dbrowser=edge
 
+test
 
 
