@@ -28,7 +28,7 @@ public class WebDrivers {
   public static WebDriver getChromeDriver() {
     if (driver == null) {
       WebDriverManager.chromedriver().setup();
-      driver = new ChromeDriver();
+        driver = new ChromeDriver();
     }
     return driver;
   }
