@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
     glue = "wiki_test_steps",
     features = "src/test/resources/features",
     plugin = {
-//        "com.epam.reportportal.cucumber.ScenarioReporter",
         "TestStepWatch"
     })
 public class RunCucumberTest {
