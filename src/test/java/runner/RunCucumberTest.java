@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-    glue = "wiki_test_steps",
+    glue = {"wiki_test_steps","testRail"},
     features = "src/test/resources/features",
     plugin = {
         "TestStepWatch"
