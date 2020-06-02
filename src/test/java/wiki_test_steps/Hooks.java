@@ -10,11 +10,16 @@ import com.codepine.api.testrail.model.Run;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import guru_code.testrail.APIClient;
+import guru_code.testrail.APIException;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
+import org.json.simple.JSONObject;
 import org.openqa.selenium.WebDriver;
 import webdriver.WebDrivers;
 
@@ -27,7 +32,7 @@ public class Hooks {
   }
 
   @SneakyThrows
-  @Before
+  @Before(order = 1)
   public void before() {
     driver = WebDrivers.createWebDriver();
   }
@@ -67,6 +72,7 @@ public class Hooks {
   public void initCaseFieldByCucumberScenarioTitle(Scenario scenario) {
     if (hasTestRailRunCreationAllowed) {
       testCase = getTestRailCaseByCucumberScenarioTitle(scenario);
+      resultFields = testRail.resultFields().list().execute();
     }
 //    Run run = addNewRun("Daily Run");
 //    closeTestRun(run);
@@ -97,12 +103,12 @@ public class Hooks {
 
   private static Run addNewRun(String runName) {
     return testRail.runs()
-        .add(myProject.getId(), new Run().setName(runName + LocalDate.now())).execute();
+        .add(myProject.getId(), new Run().setName(runName + LocalDateTime.now())).execute();
   }
 
-  private void addResult(Run run, String title, Case testCase, List<ResultField> customResult) {
+  private void addResult(Run run, String title, Case testCase, List<ResultField> customResult, Scenario scenario) {
     testRail.results()
-        .addForCase(run.getId(), testCase.getId(), new Result().setStatusId(1), customResult)
+        .addForCase(run.getId(), testCase.getId(), new Result().setStatusId(getStatusMap().get(String.valueOf(scenario.getStatus()))), customResult)
         .execute();
   }
 
@@ -111,7 +117,7 @@ public class Hooks {
   }
 
   private void setTestCasesExecutionResult(Case testCase, Scenario scenario) {
-    int testRailRunId = 1;
+    int testRailRunId = testRail.runs().update(addNewRun("Run")).execute().getId();
     testRail.tests()
         .list(testRailRunId)
         .execute()
@@ -119,7 +125,7 @@ public class Hooks {
         .filter(test -> test.getCaseId() == testCase.getId())
         .findFirst()
         .ifPresent(test -> testRail.results().addForCase(testRailRunId, testCase.getId(),
-            new Result().setStatusId(getStatusMap().get(scenario.getStatus())), resultFields)
+            new Result().setStatusId(getStatusMap().get(String.valueOf(scenario.getStatus()))), resultFields)
             .execute());
   }
 
@@ -143,11 +149,11 @@ public class Hooks {
     int statusRetest = 4;
     int statusFailed = 5;
 
-    mapCucumberScenarioRusultsToTestRailCases.put("passed", statusPassed);
-    mapCucumberScenarioRusultsToTestRailCases.put("blocked", statusBlocked);
-    mapCucumberScenarioRusultsToTestRailCases.put("untested", statusUntested);
-    mapCucumberScenarioRusultsToTestRailCases.put("retest", statusRetest);
-    mapCucumberScenarioRusultsToTestRailCases.put("fail", statusFailed);
+    mapCucumberScenarioRusultsToTestRailCases.put("PASSED", statusPassed);
+    mapCucumberScenarioRusultsToTestRailCases.put("BLOCKED", statusBlocked);
+    mapCucumberScenarioRusultsToTestRailCases.put("UNTESTED", statusUntested);
+    mapCucumberScenarioRusultsToTestRailCases.put("RETEST", statusRetest);
+    mapCucumberScenarioRusultsToTestRailCases.put("FAIL", statusFailed);
     return mapCucumberScenarioRusultsToTestRailCases;
   }
 }
